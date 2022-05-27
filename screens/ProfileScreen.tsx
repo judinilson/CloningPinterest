@@ -1,18 +1,23 @@
-import { Image, StyleSheet, ScrollView } from "react-native";
+import { Image, StyleSheet, ScrollView, Pressable } from "react-native";
 import MasonryList from "../components/MasonryList";
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 import pins from "../assets/data/pins";
 import { Entypo, Feather } from "@expo/vector-icons";
+import { useSignOut } from "@nhost/react";
 
 export default function ProfileScreen({
   navigation,
-}: RootTabScreenProps<"TabOne">) {
+}: RootTabScreenProps<"Profile">) {
+  const { signOut } = useSignOut();
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.icons}>
-          <Feather name="share" size={24} color="black" style={styles.icon} />
+          <Pressable onPress={signOut}>
+            <Feather name="share" size={24} color="black" style={styles.icon} />
+          </Pressable>
+
           <Entypo
             name="dots-three-horizontal"
             size={24}
