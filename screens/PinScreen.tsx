@@ -31,6 +31,7 @@ const GET_PIN_QUERY = `
 const PinScreen = () => {
   const nhost = useNhostClient();
   const [pin, setPin] = useState<any>(null);
+  const [imageUri, setImageUri] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -51,18 +52,31 @@ const PinScreen = () => {
     }
   };
 
+  const fetchImage = async () => {
+    const result = await nhost.storage.getPresignedUrl({
+      fileId: pin.image,
+    });
+    if (result.presignedUrl?.url) {
+      setImageUri(result.presignedUrl.url);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, [pin]);
+
   //fetchPins every time it changes
   useEffect(() => {
     fetchPin(pinId);
   }, [pinId]);
 
   useEffect(() => {
-    if (pin) {
-      Image.getSize(pin.image, (width, height) => {
+    if (imageUri) {
+      Image.getSize(pin.imageUri, (width, height) => {
         setRation(width / height);
       });
     }
-  }, [pin]);
+  }, [imageUri]);
 
   if (!pin) {
     return <Text>Pin not found</Text>;
@@ -78,7 +92,7 @@ const PinScreen = () => {
       <View style={styles.root}>
         <Image
           source={{
-            uri: pin?.image,
+            uri: imageUri,
           }}
           style={[styles.image, { aspectRatio: ratio }]}
         />

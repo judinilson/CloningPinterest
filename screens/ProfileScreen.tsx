@@ -10,6 +10,7 @@ export default function ProfileScreen({
   navigation,
 }: RootTabScreenProps<"Profile">) {
   const { signOut } = useSignOut();
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>

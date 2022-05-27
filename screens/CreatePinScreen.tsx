@@ -7,6 +7,7 @@ import {
   TextInput,
   StyleSheet,
   Alert,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -30,7 +31,7 @@ mutation MyMutation($image:String!,$title:String) {
 `;
 
 const CreatePinScreen = () => {
-  const [image, setImage] = useState(null);
+  const [imageUri, setImageUri] = useState<null | String>(null);
   const [title, setTitle] = useState("");
   const nhost = useNhostClient();
   const navigation = useNavigation();
@@ -44,14 +45,43 @@ const CreatePinScreen = () => {
     //console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImageUri(result.uri);
     }
   };
+
+  const uploadFile = async () => {
+    if (!imageUri) {
+      return {
+        error: {
+          messege: "no image selected",
+        },
+      };
+    }
+    const parts = imageUri!.split("/");
+    const name = parts[parts.length - 1];
+    const nameParts = name.split(".");
+    const extension = nameParts[parts.length - 1];
+    const uri =
+      Platform.OS == "ios" ? imageUri.replace("file://", "") : imageUri;
+    const result = await nhost.storage.upload({
+      file: {
+        name,
+        type: `image/${extension}`,
+        uri,
+      },
+    });
+    return result;
+  };
   const onSubmit = async () => {
+    //upload image storage
+    const imageUploadResult = await uploadFile();
+    if (imageUploadResult.error) {
+      Alert.alert("Error: ", imageUploadResult.error.message);
+      return;
+    }
     const result = await nhost.graphql.request(CREATE_PIN_MUTATION, {
       title,
-      image:
-        "https://i.pinimg.com/736x/48/3e/2e/483e2ed2d8b5b175c82dddc6c328a258.jpg",
+      image: imageUploadResult.fileMetadata.id,
     });
     console.log(result);
     if (result.error) {
@@ -65,9 +95,14 @@ const CreatePinScreen = () => {
     // <SafeAreaView>
     <View style={styles.root}>
       <Button title="Upload your pin" onPress={pickImage} />
-      {image && (
+      {imageUri && (
         <>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image
+            source={{
+              uri: imageUri,
+            }}
+            style={styles.image}
+          />
           <TextInput
             placeholder="Title...."
             value={title}
