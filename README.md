@@ -5,7 +5,7 @@
 
 Pinterest clone with Pinterest like UI and functionalities built using React native and Nhost
 
-![Logo]([https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg](https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Pinterest_Logo.svg/440px-Pinterest_Logo.svg.png))
+![Logo](https://download.logo.wine/logo/Pinterest/Pinterest-Logo.wine.png)
 
 
 
