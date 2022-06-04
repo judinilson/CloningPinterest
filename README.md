@@ -14,7 +14,7 @@ Pinterest clone with Pinterest like UI and functionalities built using React nat
 Clone the project
 
 ```bash
-  git clone https://github.com/Pinqua/Netflix-Clone.git
+     git clone https://github.com/judinilson/CloningPinterest.git
 ```
 
 Go to the project directory
